@@ -2,6 +2,7 @@ package deck
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 )
 
@@ -45,6 +46,24 @@ func TestSort(t *testing.T) {
 	}
 }
 
+func TestShuffle(t *testing.T) {
+	//make shuffleRand deterministic
+	// First call to shuffleRand.Perm(52) should be:
+	// [40 35 ... ]
+	shuffleRand = rand.New(rand.NewSource(0))
+
+	orig := New()
+	first := orig[40]
+	second := orig[35]
+	cards := New(Shuffle)
+	if cards[0] != first {
+		t.Errorf("Expected the first card to be %s, recieved %s.", first, cards[0])
+	}
+	if cards[1] != second {
+		t.Errorf("Expected the first cards to be %s, recieved %s.", second, cards[1])
+	}
+}
+
 func TestJokers(t *testing.T) {
 	cards := New(Jokers(3))
 	count := 0
@@ -67,5 +86,12 @@ func TestFilter(t *testing.T) {
 		if c.Rank == Two || c.Rank == Three {
 			t.Error("expected all twos and threes to be filtered out. ")
 		}
+	}
+}
+
+func TestDeck(t *testing.T) {
+	cards := New(Deck(3))
+	if len(cards) != 13*4*3 {
+		t.Errorf("Expected %d cards, recieved %d cards.", 13*4*3, len(cards))
 	}
 }
